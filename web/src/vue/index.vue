@@ -118,6 +118,7 @@ export default {
                 this.input_pwdreq_invalid = false;
             } catch(e){
                 this.input_pwdreq_invalid = true;
+                return {};
             }
             
             let username = url.username;

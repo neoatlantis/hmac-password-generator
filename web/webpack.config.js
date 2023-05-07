@@ -5,6 +5,7 @@ const DefinePlugin = require("webpack").DefinePlugin;
 const CopyPlugin = require("copy-webpack-plugin");
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CspHtmlWebpackPlugin = require("csp-html-webpack-plugin");
 
 const package_json = JSON.parse(fs.readFileSync("./package.json"));
 
@@ -17,6 +18,7 @@ module.exports = (env)=>{
 
 
     const is_dev = (env.production === undefined);
+    console.log("is_dev", is_dev);
 
     const output_path = __dirname;
 
@@ -65,6 +67,8 @@ module.exports = (env)=>{
         (is_dev?"dev":"dist")
     );
 
+    console.log("web_dstpath", web_dstpath);
+
 
     function web_template(scriptname, pagename){ return {
         entry: path.resolve(__dirname, "src", scriptname),
@@ -89,15 +93,26 @@ module.exports = (env)=>{
                 template: path.join(web_srcpath, pagename),
                 filename: path.join(web_dstpath, pagename),
                 scriptLoading: "module",
+                hash: true,
             }),
-            new CopyPlugin({
+            new CspHtmlWebpackPlugin({
+                'script-src': [
+                    'https://cdn.jsdeliver.net',
+                ],
+                'style-src': [
+                    'https://cdn.jsdeliver.net',
+                ]
+            }, {
+                enabled: !is_dev,
+            }),
+            /*new CopyPlugin({
                 patterns: [
                     {
                         from: path.join(web_srcpath, "static"),
                         to:   path.join(web_dstpath, "static"),
                     }
                 ]
-            }),
+            }),*/
         ].concat(generic_plugins),
 
     } }

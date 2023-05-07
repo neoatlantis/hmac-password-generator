@@ -1,0 +1,24 @@
+{
+  "name": "web-hmac-password-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack",
+    "dist": "webpack --production"
+  },
+  "author": "NeoAtlantis",
+  "license": "ISC",
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "html-webpack-plugin": "^5.5.1",
+    "ifdef-loader": "^2.3.2",
+    "vue": "^3.2.47",
+    "vue-loader": "^17.1.0",
+    "vue-template-compiler": "^2.7.14",
+    "webpack-cli": "^5.1.0"
+  },
+  "dependencies": {
+    "crypto-js": "^4.1.1"
+  }
+}

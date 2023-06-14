@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require('path');
+const _ = require("lodash");
 
 const DefinePlugin = require("webpack").DefinePlugin;
 const CopyPlugin = require("copy-webpack-plugin");
@@ -9,6 +10,7 @@ const CspHtmlWebpackPlugin = require("csp-html-webpack-plugin");
 
 const package_json = JSON.parse(fs.readFileSync("./package.json"));
 
+const deployment_config = _.get(package_json, "deployment_config");
 
 
 
@@ -55,6 +57,8 @@ module.exports = (env)=>{
         new DefinePlugin({
             VERSION: JSON.stringify(VERSION),
             DEV: JSON.stringify(is_dev),
+
+            WEBHSM: JSON.stringify(_.get(deployment_config, "webhsm")),
         }),
     ];
 

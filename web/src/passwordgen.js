@@ -49,8 +49,6 @@ export default function({
         format_parsed.special ? '!@#$%^&' : '',
     ].join("");
 
-    console.log(alphabet, format_parsed);
-
     if(alphabet == "") alphabet = "abcdefghijklmnopqrstuvwxyz";
 
 

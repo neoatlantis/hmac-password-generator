@@ -20,6 +20,12 @@
     "webpack-cli": "^5.1.0"
   },
   "dependencies": {
-    "crypto-js": "^4.1.1"
+    "crypto-js": "^4.1.1",
+    "lodash": "^4.17.21"
+  },
+  "deployment_config": {
+    "webhsm": {
+      "endpoint": "https://europe-central2-neoatlantis-password-manager.cloudfunctions.net/generate-password"
+    }
   }
 }

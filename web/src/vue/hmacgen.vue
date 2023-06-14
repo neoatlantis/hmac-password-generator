@@ -36,10 +36,14 @@
         获取密码失败。请重试。
     </div>
 
+    <pre v-if="result">{{ result }}</pre>
+
 </div>
 </template>
 <script>
 import _ from "lodash";
+import { Buffer } from "buffer";
+import { seed_to_password } from "app/passwordgen";
 
 async function generate_password(){
     if(this.use_web_hsm){
@@ -61,14 +65,14 @@ async function generate_password(){
         } catch(e){
             // failed getting seed
             this.on_failed();
+        } finally {
+            this.key = "";
         }
 
     } else {
         // use normal way to generate
     }
 }
-
-
 
 
 
@@ -83,6 +87,7 @@ export default {
         },
         category: true,
         hint: true,
+        format: true,
     },
 
     data(){ return {
@@ -92,6 +97,8 @@ export default {
 
         generating: false,
         failed: false,
+
+        result: "",
     }},
 
     computed: {
@@ -119,7 +126,14 @@ export default {
 
         async on_seeded(seed){
             this.failed = false;
+            // verify seed
+            let buf = Buffer.from(seed, "hex");
+            if(buf.length != 64){
+                alert("Unexpected HSM output. Bytes length invalid.");
+                return;
+            }
 
+            this.result = seed_to_password(buf, this.format);
         },
 
         async on_failed(){

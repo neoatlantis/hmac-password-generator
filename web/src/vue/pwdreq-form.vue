@@ -139,6 +139,7 @@ export default {
             this.input_hint = hint;
             this.$emit("hint", hint);
             this.$emit("category", category);
+            this.$emit("format", format);
 
             return { username, domain, category, format, hint };
         },
@@ -152,6 +153,7 @@ export default {
 
             this.$emit("hint", this.input_hint);
             this.$emit("category", this.input_category);
+            this.$emit("format", this.input_format);
 
             if(!this.input_from_url){
                 let url = new URL("http://a");

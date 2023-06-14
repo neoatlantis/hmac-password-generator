@@ -9,11 +9,12 @@
         @pwdreq="pwdreq=$event"
         @hint="hint=$event"
         @category="category=$event"
+        @format="format=$event"
         v-if="step==1"
     ></PwdreqForm>
 
     <HMACGen
-        :pwdreq="pwdreq" :hint="hint" :category="category"
+        :pwdreq="pwdreq" :hint="hint" :category="category" :format="format"
 
         v-if="step==2"
     ></HMACGen>

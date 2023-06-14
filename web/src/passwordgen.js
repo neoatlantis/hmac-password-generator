@@ -1,8 +1,8 @@
 import crypto from "crypto-js";
 import base85 from "app/base85";
 
-const SHA256 = crypto.SHA256;
-const SHA256_HMAC = crypto.HmacSHA256;
+const SHA512 = crypto.SHA512;
+const SHA512_HMAC = crypto.HmacSHA512;
 
 
 function WordArray2ArrayBuffer(wa){
@@ -26,9 +26,38 @@ function parse_format(format){
 }
 
 
+function seed_to_password(seed, format){
+    let format_parsed = parse_format(format);
+    let alphabet = [
+        format_parsed.lowercase ? 'abcdefghijklmnopqrstuvwxyz' : '',
+        format_parsed.uppercase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : '',
+        format_parsed.numeric ? '0123456789' : '',
+        format_parsed.special ? '!@#$%^&' : '',
+    ].join("");
+    if(alphabet == "") alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+    let output = "";
+    let h = seed;
+    while(output.length < format_parsed.length){
+        h = SHA512(h);
+        let encoded = base85(WordArray2ArrayBuffer(h));
+        
+        for(let i=0; i<encoded.length; i++){
+            let c = encoded[i];
+            if(alphabet.indexOf(c) >= 0){
+                output += c;
+            }
+        }
+    }    
+    return output.slice(0, format_parsed.length);
+}
+
+export {
+    seed_to_password,
+}
 
 
-export default function({
+/*export default function({
     key,
     category,
     domain,
@@ -40,16 +69,7 @@ export default function({
 
     // TODO ensure all params in ASCII printable range
 
-    let format_parsed = parse_format(format);
-
-    let alphabet = [
-        format_parsed.lowercase ? 'abcdefghijklmnopqrstuvwxyz' : '',
-        format_parsed.uppercase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : '',
-        format_parsed.numeric ? '0123456789' : '',
-        format_parsed.special ? '!@#$%^&' : '',
-    ].join("");
-
-    if(alphabet == "") alphabet = "abcdefghijklmnopqrstuvwxyz";
+    
 
 
     let password_derivation_parameter = SHA256(
@@ -61,22 +81,6 @@ export default function({
         key
     );
 
-    let output = "";
 
-    let h = password_seed;
-    while(output.length < format_parsed.length){
-        h = SHA256(h);
-        let encoded = base85(WordArray2ArrayBuffer(h));
-        
-        for(let i=0; i<encoded.length; i++){
-            let c = encoded[i];
-            if(alphabet.indexOf(c) >= 0){
-                output += c;
-            }
-        }
 
-    }
-    
-    return output.slice(0, format_parsed.length);
-
-}
+}*/

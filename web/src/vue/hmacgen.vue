@@ -35,11 +35,11 @@
         <div class="spinner-border"></div>
     </div>
 
-    <div class="alert alert-danger" style="margin-top: 1em" v-if="failed">
+    <div class="alert alert-danger mt-3" v-if="failed">
         获取密码失败。请重试。
     </div>
 
-    <pre v-if="result">{{ result }}</pre>
+    <Result v-if="seed" :seed="seed" :format="format"></Result>
 
 </div>
 </template>
@@ -47,11 +47,11 @@
 import _ from "lodash";
 import { Buffer } from "buffer";
 import {
-    seed_to_password,
     get_password_derivation_parameter,
     SHA512_HMAC,
 } from "app/passwordgen";
 import pwdreq_parser from "app/pwdreq_parser";
+import Result from "./result.vue";
 
 async function generate_password(){
     if(this.use_web_hsm){
@@ -109,17 +109,13 @@ export default {
 
     data(){ return {
         WEBHSM: WEBHSM,
-
-        /// #if 1==1
-        WEBHSM: null,
-        /// #endif
-
+        
         key: "",
 
         generating: false,
         failed: false,
 
-        result: "",
+        seed: "",
     }},
 
     computed: {
@@ -166,13 +162,16 @@ export default {
                 alert("Unexpected HSM output. Bytes length invalid.");
                 return;
             }
-
-            this.result = seed_to_password(buf, this.format);
+            this.seed = buf;
         },
 
         async on_failed(){
             this.failed = true;
         }
+    },
+
+    components: {
+        Result,
     }
 }
 </script>

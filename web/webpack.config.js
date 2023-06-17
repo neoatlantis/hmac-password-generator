@@ -21,6 +21,7 @@ module.exports = (env)=>{
 
     const is_dev = (env.production === undefined);
     console.log("is_dev", is_dev);
+    console.log("deployment_config", deployment_config);
 
     const output_path = __dirname;
 

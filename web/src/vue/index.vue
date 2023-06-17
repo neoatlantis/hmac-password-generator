@@ -23,7 +23,8 @@
     ></HMACGen>
 
     <div style="margin-top: 1em; text-align: center;">
-        <button type="submit" class="btn btn-primary" v-if="step==1" @click="step=2">下一步</button>
+        <button type="submit" class="btn btn-primary" v-if="step==1" :disabled="pwdreq==''" @click="step=2">下一步</button>
+        <button type="submit" class="btn btn-primary" v-if="step==2" @click="step=1">重新开始</button>
     </div>
 
 </div>
@@ -44,33 +45,12 @@ export default {
         pwdreq: "",
         hint: "",
         category: "",
+        format: "",
         generation_password: "",
         
 
         error: false,
     } },
-
-    
-/*
-        password(){
-            try{
-                let pwd = passwordgen({
-                    key: this.key,
-                    category: this.input_category,
-                    domain: this.input_domain,
-                    username: this.input_username,
-                    generation_password: this.generation_password,
-                    format: this.input_format,
-                });
-                this.error = false;
-                return pwd;
-            } catch(e){
-                this.error = e.message;
-                return "";
-            }
-        }
-    }
-*/
 
     components: {
         PwdreqForm,

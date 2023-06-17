@@ -15,7 +15,7 @@ export default function(input){
     let domain   = url.hostname;
     let category = url.pathname;
     let search   = url.searchParams;
-    let format   = url.searchParams.get("format");
+    let format   = url.searchParams.get("format") || "";
     let hint     = url.hash;
 
     if(hint.slice(0,1)=='#') hint = hint.slice(1);

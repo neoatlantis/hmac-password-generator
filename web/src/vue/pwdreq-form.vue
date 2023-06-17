@@ -102,9 +102,6 @@ export default {
 
         generation_password: "",
 
-        /// #if DEV
-        input_pwdreq: "pwdreq://username@domain/default?format=24N",
-        /// #endif
         input_pwdreq_invalid: false,
     } },
 
@@ -137,6 +134,13 @@ export default {
                 this.input_pwdreq_invalid = true;
                 this.$emit("pwdreq", "");
             }
+            return {
+                username: "",
+                domain: "",
+                category: "",
+                format: "",
+                hint: ""
+            };
         
         },
 
@@ -152,11 +156,11 @@ export default {
             this.$emit("format", this.input_format);
 
             if(!this.input_from_url){
-                let url = new URL("http://a");
+                let url = new URL("http://domain");
                 url.username = this.input_username;
                 url.hostname = this.input_domain;
-                url.pathname = this.input_category;
-                url.search = "?format=" + this.input_format;
+                url.pathname = this.input_category || '/default';
+                url.search = "?format=" + (this.input_format || '24N');
                 url.hash = "#" + this.input_hint;
                 url.protocol = "http:";
 

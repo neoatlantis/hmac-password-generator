@@ -39,7 +39,7 @@
         获取密码失败。请重试。
     </div>
 
-    <Result v-if="seed" :seed="seed" :format="format"></Result>
+    <Result v-if="seed" :seed="seed" :format="format" @reset="seed=''"></Result>
 
 </div>
 </template>

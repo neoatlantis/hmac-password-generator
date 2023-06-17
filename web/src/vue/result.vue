@@ -6,7 +6,7 @@
                 <input :type="hidden?'password':'text'" class="form-control" :value="result" readonly />
                 <button
                     class="btn btn-outline-secondary"
-                    @mousedown="hidden=false" @mouseup="hidden=true"
+                    @mousedown="hidden=false" @mouseup="hidden=true; reset_expiral()"
                     @mouseout="hidden=true"
                 >显示</button>
                 <button class="btn btn-success" @click="copy">复制</button>
@@ -22,7 +22,19 @@ import _ from "lodash";
 import { Buffer } from "buffer";
 import { seed_to_password } from "app/passwordgen";
 
+
 export default {
+
+    mounted(){
+        setInterval(()=>{
+            let now = new Date().getTime();
+            if(this.expiral > 0 && now > this.expiral){
+                this.$emit("reset");
+            }
+        }, 1000);
+        this.reset_expiral();
+    },
+
     props: {
         seed: {
             required: true,
@@ -34,12 +46,18 @@ export default {
     },
 
     data(){ return {
+        expiral: -1,
         hidden: true,
         success: false,
     }},
 
     methods: {
+        reset_expiral(){
+            this.expiral = new Date().getTime() + 30000;
+        },
+
         copy(){
+            this.reset_expiral();
             navigator.clipboard.writeText(this.result).then(
                 ()=>{
                     this.success = true;

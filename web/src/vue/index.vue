@@ -36,21 +36,21 @@ import HMACGen from "./hmacgen.vue";
 
 export default {
 
-    data(){ return {
+    data(){
+        return {
+            step: 1,
 
-        step: 1,
+            key: "",
 
-        key: "",
-
-        pwdreq: "",
-        hint: "",
-        category: "",
-        format: "",
-        generation_password: "",
-        
-
-        error: false,
-    } },
+            pwdreq: "",
+            hint: "",
+            category: "",
+            format: "",
+            generation_password: "",
+            
+            error: false,
+        }
+    },
 
     components: {
         PwdreqForm,

@@ -90,20 +90,24 @@ import pwdreq_parser from "app/pwdreq_parser";
 
 export default {
 
-    data(){ return {
-        input_from_url: true,
-        input_pwdreq: "",
+    data(){
+        let initial_pwdreq = (_.get(window, "location.hash") || "").slice(1);
 
-        input_username: "",
-        input_domain: "",
-        input_category: "",
-        input_format: "",
-        input_hint: "",
+        return {
+            input_from_url: true,
+            input_pwdreq: initial_pwdreq,
 
-        generation_password: "",
+            input_username: "",
+            input_domain: "",
+            input_category: "",
+            input_format: "",
+            input_hint: "",
 
-        input_pwdreq_invalid: false,
-    } },
+            generation_password: "",
+
+            input_pwdreq_invalid: false,
+        }
+    },
 
 
     computed: {

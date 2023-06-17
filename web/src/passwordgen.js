@@ -1,8 +1,25 @@
-import crypto from "crypto-js";
+import jsSHA from "jssha";
 import base85 from "app/base85";
+import { Buffer } from "buffer";
 
-const SHA512 = crypto.SHA512;
-const SHA512_HMAC = crypto.HmacSHA512;
+
+
+function SHA512(buffer){
+    const obj = new jsSHA("SHA-512", "UINT8ARRAY");
+    obj.update(buffer);
+    return obj.getHash("UINT8ARRAY");
+}
+
+function SHA512_HMAC(buffer, key){
+    const obj = new jsSHA("SHA-512", "UINT8ARRAY", {
+        hmacKey: { value: key, format: "UINT8ARRAY" },
+    });
+    obj.update(buffer);
+    return obj.getHash("UINT8ARRAY");
+}
+
+
+
 
 
 function WordArray2ArrayBuffer(wa){
@@ -27,6 +44,10 @@ function parse_format(format){
 
 
 function seed_to_password(seed, format){
+    if(!Buffer.isBuffer(seed)){
+        throw Error("seed must be a buffer.");
+    }
+
     let format_parsed = parse_format(format);
     let alphabet = [
         format_parsed.lowercase ? 'abcdefghijklmnopqrstuvwxyz' : '',
@@ -40,7 +61,7 @@ function seed_to_password(seed, format){
     let h = seed;
     while(output.length < format_parsed.length){
         h = SHA512(h);
-        let encoded = base85(WordArray2ArrayBuffer(h));
+        let encoded = base85(h);
         
         for(let i=0; i<encoded.length; i++){
             let c = encoded[i];
@@ -52,35 +73,34 @@ function seed_to_password(seed, format){
     return output.slice(0, format_parsed.length);
 }
 
-export {
-    seed_to_password,
-}
 
-
-/*export default function({
-    key,
+function get_password_derivation_parameter({
     category,
     domain,
     username,
-    generation_password,
-    format
+    generation_password
 }){
+    if(![
+        category, domain, username, generation_password
+    ].every((e)=>/^([\x21-\x7e]+)?$/.test(e))){
+        console.log(arguments);
+        throw Error("Invalid parameter for password derivation.");
+    }
+
+    let joined = [
+        category, domain, username, generation_password,
+    ].join("\n");
+    let joined_buffer = Buffer.from(joined, "ascii");
+
+    return Buffer.from(SHA512(joined_buffer)).toString("hex").toLowerCase();
+}
 
 
-    // TODO ensure all params in ASCII printable range
-
-    
-
-
-    let password_derivation_parameter = SHA256(
-        [category, domain, username, generation_password].join("\n")
-    ).toString().toLowerCase();
-
-    let password_seed = SHA256_HMAC(
-        password_derivation_parameter,
-        key
-    );
 
 
 
-}*/
+export {
+    seed_to_password,
+    get_password_derivation_parameter,
+    SHA512_HMAC,
+}

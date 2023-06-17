@@ -69,7 +69,7 @@
                 <label for="generation-password" class="form-label">输入代际口令:</label>
                 <input
                     type="password" class="form-control"
-                    v-model="generation_password" id="generation-password"
+                    @change="$emit('generation_password', $event.target.value)"
                     :placeholder="parsed_pwdreq.hint"
                     autocomplete="current-password"
                 >
@@ -85,6 +85,9 @@
     </div>
 </template>
 <script>
+
+import pwdreq_parser from "app/pwdreq_parser";
+
 export default {
 
     data(){ return {
@@ -97,6 +100,8 @@ export default {
         input_format: "",
         input_hint: "",
 
+        generation_password: "",
+
         /// #if DEV
         input_pwdreq: "pwdreq://username@domain/default?format=24N",
         /// #endif
@@ -107,41 +112,32 @@ export default {
     computed: {
 
         parsed_pwdreq(){
-            let url = null;
             try{
-                url = new URL(this.input_pwdreq);
-                if("pwdreq:" != url.protocol) throw Error();
-
-                // treat as HTTP url afterwards. hostname etc. are HTTP url
-                // specific.
-                url = new URL("http"+this.input_pwdreq.slice(6));
+                let {
+                    domain,
+                    category,
+                    username,
+                    format,
+                    hint
+                } = pwdreq_parser(this.input_pwdreq);
                 this.input_pwdreq_invalid = false;
                 this.$emit("pwdreq", this.input_pwdreq);
+
+                this.input_domain = domain;
+                this.input_category = category;
+                this.input_username = username;
+                this.input_format = format;
+                this.input_hint = hint;
+                this.$emit("hint", hint);
+                this.$emit("category", category);
+                this.$emit("format", format);
+
+                return { username, domain, category, format, hint };
             } catch(e){
                 this.input_pwdreq_invalid = true;
                 this.$emit("pwdreq", "");
-                return {};
             }
-            
-            let username = url.username;
-            let domain   = url.hostname;
-            let category = url.pathname;
-            let search   = url.searchParams;
-            let format   = url.searchParams.get("format");
-            let hint     = url.hash;
-
-            if(hint.slice(0,1)=='#') hint = hint.slice(1);
-
-            this.input_domain = domain;
-            this.input_category = category;
-            this.input_username = username;
-            this.input_format = format;
-            this.input_hint = hint;
-            this.$emit("hint", hint);
-            this.$emit("category", category);
-            this.$emit("format", format);
-
-            return { username, domain, category, format, hint };
+        
         },
 
         updated_pwdreq(){

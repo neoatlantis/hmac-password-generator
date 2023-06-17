@@ -11,6 +11,9 @@
             <div class="mb-1">
                 <input type="text" class="form-control" :value="pwdreq" readonly disabled>
             </div>
+            <div class="mb-1">
+                <input type="text" class="form-control" :value="password_derivation_parameter.slice(0,8)+'...'+password_derivation_parameter.slice(-8)" readonly disabled>
+            </div>
         </div>
 
         <div class="card-footer" >
@@ -43,14 +46,19 @@
 <script>
 import _ from "lodash";
 import { Buffer } from "buffer";
-import { seed_to_password } from "app/passwordgen";
+import {
+    seed_to_password,
+    get_password_derivation_parameter,
+    SHA512_HMAC,
+} from "app/passwordgen";
+import pwdreq_parser from "app/pwdreq_parser";
 
 async function generate_password(){
     if(this.use_web_hsm){
         let endpoint = _.get(this, "WEBHSM.endpoint");
 
         let formdata = new URLSearchParams();
-        formdata.append('request', this.pwdreq);
+        formdata.append('request', this.password_derivation_parameter);
         formdata.append('otp', this.key);
 
         try{
@@ -65,13 +73,17 @@ async function generate_password(){
         } catch(e){
             // failed getting seed
             this.on_failed();
-        } finally {
-            this.key = "";
         }
-
     } else {
         // use normal way to generate
+        let result = SHA512_HMAC(
+            Buffer.from(this.password_derivation_parameter, "ascii"),
+            Buffer.from(this.key, "ascii")
+        );
+        this.on_seeded(result);
     }
+
+    this.key = "";
 }
 
 
@@ -85,6 +97,11 @@ export default {
             type: String,
             required: true,
         },
+        generation_password: {
+            type: String,
+            required: true,
+        },
+
         category: true,
         hint: true,
         format: true,
@@ -92,6 +109,10 @@ export default {
 
     data(){ return {
         WEBHSM: WEBHSM,
+
+        /// #if 1==1
+        WEBHSM: null,
+        /// #endif
 
         key: "",
 
@@ -104,6 +125,19 @@ export default {
     computed: {
         use_web_hsm(){
             return _.isString(_.get(this.WEBHSM, "endpoint"));
+        },
+
+        password_derivation_parameter(){
+            try{
+                let { category, domain, username } = pwdreq_parser(this.pwdreq);
+                return get_password_derivation_parameter({
+                    category, domain, username,
+                    generation_password: this.generation_password
+                });
+            } catch(e){
+                console.log(e);
+                return null;
+            }
         }
     },
 

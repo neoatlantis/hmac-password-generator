@@ -10,11 +10,14 @@
         @hint="hint=$event"
         @category="category=$event"
         @format="format=$event"
+        @generation_password="generation_password=$event"
+
         v-if="step==1"
     ></PwdreqForm>
 
     <HMACGen
         :pwdreq="pwdreq" :hint="hint" :category="category" :format="format"
+        :generation_password="generation_password"
 
         v-if="step==2"
     ></HMACGen>
@@ -37,11 +40,11 @@ export default {
         step: 1,
 
         key: "",
-        generation_password: "",
 
         pwdreq: "",
         hint: "",
         category: "",
+        generation_password: "",
         
 
         error: false,

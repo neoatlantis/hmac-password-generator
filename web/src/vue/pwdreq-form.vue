@@ -13,6 +13,7 @@
             <div class="mb-3">
                 <div class="input-group has-validation">
                     <input
+                        :disabled="!input_from_url"
                         type="text"
                         class="form-control font-monospace"
                         :class="{'is-invalid':input_pwdreq && input_pwdreq_invalid}"
@@ -39,21 +40,21 @@
                 <div class="row mb-1">
                     <div class="col-3">分类</div>
                     <div class="col-9">
-                        <input class="form-control font-monospace" @click="input_from_url=false" v-model="input_category" type="text" :readonly="input_from_url" />
+                        <input :disabled="input_from_url" class="form-control font-monospace" @click="input_from_url=false" v-model="input_category" type="text" :readonly="input_from_url" />
                     </div>
                 </div>
 
                 <div class="row mb-1">
                     <div class="col-3">请求域</div>
                     <div class="col-9">
-                        <input class="form-control font-monospace" @click="input_from_url=false" v-model="input_domain" type="text" :readonly="input_from_url" />
+                        <input  :disabled="input_from_url" class="form-control font-monospace" @click="input_from_url=false" v-model="input_domain" type="text" :readonly="input_from_url" />
                     </div>
                 </div>
 
                 <div class="row mb-1">
                     <div class="col-3">用户名</div>
                     <div class="col-9">
-                        <input class="form-control font-monospace" @click="input_from_url=false" v-model="input_username" type="text" :readonly="input_from_url" />
+                        <input  :disabled="input_from_url" class="form-control font-monospace" @click="input_from_url=false" v-model="input_username" type="text" :readonly="input_from_url" />
                     </div>
                 </div>
 

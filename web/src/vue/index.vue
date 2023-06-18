@@ -24,7 +24,7 @@
 
     <div style="margin-top: 1em; text-align: center;">
         <button type="submit" class="btn btn-primary" v-if="step==1" :disabled="pwdreq==''" @click="step=2">下一步</button>
-        <button type="submit" class="btn btn-primary" v-if="step==2" @click="step=1">重新开始</button>
+        <button type="submit" class="btn btn-primary" v-if="step==2" @click="refresh">重新开始</button>
     </div>
 
 </div>
@@ -49,6 +49,12 @@ export default {
             generation_password: "",
             
             error: false,
+        }
+    },
+
+    methods: {
+        refresh(){
+            window.location.reload();
         }
     },
 
